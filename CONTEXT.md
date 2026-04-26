@@ -166,9 +166,12 @@ The `.quiz-tail` divs with `<span>` children form thought-bubble connector circl
 The flipbook spread is 820px wide. Options are positioned as `position: absolute` inside the quiz scene (also 820×472).
 
 ```css
-/* Q1 — left option smaller to compensate for denser image content */
-#q1o1 { left: 28px;  top: 95px;  width: 270px; height: 198px; }
-#q1o2 { left: 490px; top: 82px;  width: 315px; height: 232px; }
+/* Q1 — MUST use different CSS sizes to compensate for image padding difference:
+   q1Option1.png fills only 72.7% of its canvas (27% transparent padding around cloud)
+   q1Option2.png fills 94.4% of its canvas (almost no padding)
+   At equal CSS sizes, q1Option2 appears ~30% bigger. Calibrated values make visual clouds equal (~245x190px). */
+#q1o1 { left: 20px;  top: 80px;  width: 337px; height: 249px; }
+#q1o2 { left: 510px; top: 110px; width: 259px; height: 190px; }
 
 /* Q2, Q3, Q4 — both options equal size */
 #q2o1 { left: 25px;  top: 85px;  width: 300px; height: 220px; }
