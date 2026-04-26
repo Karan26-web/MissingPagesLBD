@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# VS Code local settings (keep settings.json, ignore personal overrides)
+.vscode/settings.local.json
+
+# Claude Code memory (AI session data, not project code)
+.claude/
+
+# Node / build artifacts (if ever added)
+node_modules/
+dist/
+.cache/
+
+# Environment / secrets
+.env
+.env.*
+
+# OS thumbnails / metadata
+Thumbs.db
+Desktop.ini
