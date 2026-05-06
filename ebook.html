@@ -174,7 +174,7 @@
     /* ── Theme tokens (set by JS via THEMES[ACTIVE_THEME]) ── */
     :root {
       /* Defaults match ACTIVE_THEME ('pawYellow') to avoid initial-paint flash */
-      --theme-bg: #ac5eff !important;
+      --theme-bg: #c4a2ff !important;
       --theme-cover: #7B2630;
       --theme-cover-dark: #5C1B23;
       --theme-cover-light: #9C3641;
@@ -198,15 +198,12 @@
       align-items: center;
     }
 
-    /* ── Purple hardcover wrap ──
-               Matches reference: thick purple border, open-book V-dip at top center,
-               rounded top corners, flat bottom connecting to page stack
-            */
+    /* ── Purple hardcover wrap — left spine border only ── */
     .book-cover-wrap {
       position: relative;
       background: var(--theme-cover);
-      padding: 14px 14px 0 14px;
-      border-radius: 18px 18px 0 0;
+      padding: 0 0 0 5px;
+      border-radius: 0;
       filter:
         drop-shadow(0 20px 40px rgba(0, 0, 0, .38)) drop-shadow(0 6px 14px rgba(0, 0, 0, .22));
     }
@@ -322,24 +319,32 @@
       border-radius: 0 2px 2px 0;
     }
 
-    /* ── Page turn hint — CSS-only corner fold ── */
+    /* ── Page turn hint — corner peel (cornerTease) ── */
     .page-turn-hint {
       position: absolute;
       bottom: 0;
       right: 0;
-      width: 40px;
-      height: 40px;
+      width: 76px;
+      height: 76px;
       z-index: 9998;
       pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      background: linear-gradient(315deg, #fff 45%, rgba(0, 0, 0, 0.06) 50%, transparent 55%);
-      box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.1);
-      animation: hintPulse 2s ease-in-out infinite;
+      transform: scale(0);
+      transform-origin: 100% 100%;
+      background: linear-gradient(315deg, #f5f5ed 0%, #e8e8de 26%, rgba(0,0,0,0.14) 45%, transparent 54%);
+      box-shadow: -4px -4px 12px rgba(0,0,0,0.22);
     }
 
-    .page-turn-hint.show {
-      opacity: 0.4;
+    .page-turn-hint.active {
+      animation: cornerTease 2.8s ease-in-out forwards;
+    }
+
+    @keyframes cornerTease {
+      0%   { transform: scale(0);    opacity: 0; }
+      18%  { transform: scale(1);    opacity: 1; }
+      40%  { transform: scale(0.28); opacity: 0.8; }
+      62%  { transform: scale(0.85); opacity: 1; }
+      82%  { transform: scale(0.22); opacity: 0.65; }
+      100% { transform: scale(0);    opacity: 0; }
     }
 
     .page-next-zone {
@@ -378,22 +383,11 @@
       display: none;
     }
 
-    @keyframes hintPulse {
 
-      0%,
-      100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.15);
-      }
-    }
-
-
-    /* ── Page stack below cover (horizontal lines = pages) ── */
+    /* ── Page stack below cover — hidden, no bottom border ── */
     .page-stack {
-      width: 848px;
+      display: none;
+      width: 825px;
       margin-top: 0;
       position: relative;
       display: flex;
@@ -401,26 +395,19 @@
       align-items: center;
     }
 
-    .page-stack::before,
-    .page-stack::after {
+    .page-stack::before {
       content: '';
       position: absolute;
       top: -1px;
       bottom: 0;
-      width: 14px;
+      left: 0;
+      width: 5px;
       background: var(--theme-cover);
       z-index: 0;
     }
 
-    .page-stack::before {
-      left: 0;
-    }
-
-    .page-stack::after {
-      right: 0;
-    }
-
     .page-stack-inner {
+      display: none;
       width: 820px;
       height: 24px;
       background-image: repeating-linear-gradient(to bottom,
@@ -440,19 +427,21 @@
       border-radius: inherit;
     }
 
-    /* Purple hardcover strip below page lines — extends to sides and connects upward */
+    /* Purple hardcover strip — hidden */
     .page-stack-purple {
-      width: 848px;
+      display: none;
+      width: 825px;
       height: 10px;
       background: var(--theme-cover);
-      border-radius: 0 0 18px 18px;
+      border-radius: 0 0 10px 10px;
       box-shadow: 0 8px 22px rgba(0, 0, 0, .22), 0 3px 6px rgba(0, 0, 0, .1);
       position: relative;
       z-index: 1;
     }
 
-    /* ── Spine tab ── */
+    /* ── Spine tab — hidden with bottom border ── */
     .spine-tab {
+      display: none;
       width: 60px;
       height: 22px;
       background: linear-gradient(to bottom, var(--theme-cover), var(--theme-cover-dark));
@@ -5148,16 +5137,16 @@
        Book intrinsic size ≈ 848 wide × ~520 tall (cover + page-stack).
        Scale up on big screens, down on small ones, with sensible padding. */
     function updateBookScale() {
-      var BOOK_W = 870;   /* a bit beyond 848 to include shadows */
-      var BOOK_H = 540;
-      var pad = 32;
+      var BOOK_W = 852;   /* a bit beyond 830 to include shadows */
+      var BOOK_H = 490;   /* flipbook 472px + small shadow margin, no page-stack */
+      var pad = 16;
       var vw = window.innerWidth;
       var vh = window.innerHeight;
       var sx = (vw - pad) / BOOK_W;
       var sy = (vh - pad) / BOOK_H;
       var scale = Math.min(sx, sy);
-      /* Allow growth up to 1.45× on huge displays, shrink as needed on phones */
-      scale = Math.max(0.32, Math.min(scale, 1.45));
+      /* Allow growth up to 1.8× on huge displays, shrink as needed on phones */
+      scale = Math.max(0.32, Math.min(scale, 1.8));
       document.documentElement.style.setProperty('--book-scale', scale.toFixed(3));
     }
     updateBookScale();
@@ -6279,27 +6268,49 @@
         }
       });
 
-      /* CSS-only page turn hint — no conflict with turn.js mouse handling */
-      var $hint = $('<div class="page-turn-hint"></div>');
+      /* Corner-peel page-turn hint — inactivity-based, from reference implementation */
+      var $cornerHint = $('<div class="page-turn-hint"></div>');
       var $nextZone = $('<div class="page-next-zone" aria-label="Next page" role="button" tabindex="0"></div>');
-      $('.flipbook-viewport').append($hint);
+      $('.flipbook-viewport').append($cornerHint);
       $('.flipbook-viewport').append($nextZone);
 
-      function updateHint() {
+      var _hintTimer = null, _hintPlaying = false;
+      var HINT_DELAY = 3000, HINT_DUR = 2800;
+
+      function _isLastPage() {
+        try { return $('#flipbook').turn('page') >= STORY.pages.length + 2 - 1; } catch(e) { return false; }
+      }
+
+      function _playHint() {
+        if (_hintPlaying || _isLastPage()) return;
+        _hintPlaying = true;
+        $cornerHint.removeClass('active');
+        void $cornerHint[0].offsetWidth;
+        $cornerHint.addClass('active');
+        _hintTimer = setTimeout(function () {
+          $cornerHint.removeClass('active');
+          _hintPlaying = false;
+          _scheduleHint();
+        }, HINT_DUR);
+      }
+
+      function _scheduleHint() { clearTimeout(_hintTimer); _hintTimer = setTimeout(_playHint, HINT_DELAY); }
+      function _cancelHint() { clearTimeout(_hintTimer); $cornerHint.removeClass('active'); _hintPlaying = false; _scheduleHint(); }
+
+      _scheduleHint();
+      $(document).on('mousemove.hint touchstart.hint mousedown.hint', _cancelHint);
+      $('#flipbook').bind('turning', _cancelHint);
+
+      function _updateNextZone() {
         try {
           var cur = $('#flipbook').turn('page');
           var lastPage = STORY.pages.length + 2;
-          if (cur >= lastPage - 1) {
-            $hint.removeClass('show');
-            $nextZone.addClass('hide');
-          } else {
-            $hint.addClass('show');
-            $nextZone.removeClass('hide');
-          }
-        } catch (e) { }
+          if (cur >= lastPage - 1) { $nextZone.addClass('hide'); }
+          else { $nextZone.removeClass('hide'); }
+        } catch(e) {}
       }
-      setTimeout(updateHint, 1200);
-      $('#flipbook').bind('turned', function () { setTimeout(updateHint, 400); });
+      setTimeout(_updateNextZone, 1200);
+      $('#flipbook').bind('turned', function () { setTimeout(_updateNextZone, 400); });
 
       /* Jump to page 2 (first real spread) without animation */
       $('#flipbook').turn('page', 2);
