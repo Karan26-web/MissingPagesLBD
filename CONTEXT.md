@@ -1,15 +1,15 @@
 # CONTEXT — Mystery of Missing Pages Ebook
 
-## Last updated: 2026-04-27
+## Last updated: 2026-05-07
 
 ---
 
 ## Project Overview
 
-A single-page interactive flipbook ebook (`ebook.html`) built with **turn.js**. Two-page landscape spread (820×472px). 9 spreads total. Alternates between video pages and quiz interaction pages.
+A single-page interactive flipbook ebook (`ebook.html`) built with **turn.js**. Two-page landscape spread (820×472px). 15 spreads total (0–14). Alternates between video pages and quiz interaction pages.
 
 **Ebook title:** "The Mystery of Missing Pages" (also subtitled "Maale & Gopu's Big Adventure")  
-**Main file:** `/Users/karan/StorylineSample/story/ebook.html` (~6450 lines)
+**Main file:** `/Users/karan/StorylineSample/story/ebook.html` (~6970 lines)
 
 ---
 
@@ -21,21 +21,17 @@ story/
 ├── CONTEXT.md              ← this file
 ├── audio/
 │   ├── Quirky_Podcast_Jingle.mp3  ← background loop music
-│   ├── poem1.mp3                  ← plays at 72% of page1-clip.mp4
-│   ├── poem2.mp3                  ← plays at 72% of page2-clip.mp4
-│   ├── poem3.mp3                  ← plays at 72% of page3-clip.mp4
-│   ├── poem4.mp3                  ← plays at 72% of page4-clip.mp4
-│   ├── q1.mp3 / q2.mp3 / q3.mp3 / q4.mp3  ← quiz narration audio
+│   ├── poem1.mp3 … poem7.mp3      ← plays at 72% of each video clip
+│   ├── q1.mp3… q7.mp3            ← quiz narration audio
 │   └── oops!wrong .mp3            ← NOTE: space before .mp3 in filename
 ├── video/
-│   ├── page1-clip.mp4 … page4-clip.mp4   ← used in ebook
-│   └── page5-clip.mp4, page6-clip.mp4    ← unused/archived
+│   └── page1-clip.mp4 … page7-clip.mp4   ← one per video spread
 └── .vscode/assets/
-    ├── q1Mainbg.png   … q4Mainbg.png     ← quiz background (includes character + doors)
-    ├── q1Option1.png  … q4Option1.png     ← left thought-bubble image (cloud shape)
-    ├── q1Option2.png  … q4Option2.png     ← right thought-bubble image (cloud shape)
-    ├── q1CorrectOption.png … q4CorrectOption.png   ← NOT used in current code (reserved)
-    ├── q1IncorrectOption.png … q4IncorrectOption.png ← NOT used (reserved)
+    ├── q1Mainbg.png   … q7Mainbg.png     ← quiz background (includes character + doors)
+    ├── q1Option1.png  … q7Option1.png     ← left thought-bubble image (cloud shape)
+    ├── q1Option2.png  … q7Option2.png     ← right thought-bubble image (cloud shape)
+    ├── q1CorrectOption.png … q7CorrectOption.png
+    ├── q1IncorrectOption.png … q7IncorrectOption.png
     ├── q1wrongbg.png                      ← Q1-only: bg image for wrong state
     └── q1wrongOption.png                  ← Q1-only: NOT used in current code
 ```
@@ -56,7 +52,13 @@ story/
 | 5     | Quiz     | Q3_HTML                        | q3.mp3 plays on navigation         |
 | 6     | Video    | `video/page4-clip.mp4`         | poem4.mp3 at 72% of duration       |
 | 7     | Quiz     | Q4_HTML                        | q4.mp3 plays on navigation         |
-| 8     | Count    | isCountPage: true              | Star count/completion page          |
+| 8     | Video    | `video/page5-clip.mp4`         | poem5.mp3 at 72% of duration       |
+| 9     | Quiz     | Q5_HTML (Rectangle)            | q5.mp3 plays on navigation         |
+| 10    | Video    | `video/page6-clip.mp4`         | poem6.mp3 at 72% of duration       |
+| 11    | Quiz     | Q6_HTML (Circle)               | q6.mp3 plays on navigation         |
+| 12    | Video    | `video/page7-clip.mp4`         | poem7.mp3 at 72% of duration       |
+| 13    | Quiz     | Q7_HTML (Square)               | q7.mp3 plays on navigation         |
+| 14    | Count    | isCountPage: true              | Star count/completion page          |
 
 turn.js adds 2 cover pages, so turn.js page number = spread index + 2.
 
@@ -70,8 +72,12 @@ turn.js adds 2 cover pages, so turn.js page number = spread index + 2.
 | Q2   | "hit the nail on the head" | Girl thumbs up        | Person hammering nail      | LEFT (o1) |
 | Q3   | "raining cats and dogs" | Cats/dogs falling from sky | Rainy street scene      | LEFT (o1) — wait, needs verification |
 | Q4   | "under the weather"  | Sick girl with cup         | Girl standing in rain      | LEFT (o1) |
+| Q5   | Rectangle halves     | TBD (assets pending)       | TBD (assets pending)       | LEFT (o1) — swap listeners if needed |
+| Q6   | Circle halves        | TBD (assets pending)       | TBD (assets pending)       | LEFT (o1) — swap listeners if needed |
+| Q7   | Square halves        | TBD (assets pending)       | TBD (assets pending)       | LEFT (o1) — swap listeners if needed |
 
 *Verify Q3 by checking `o1.addEventListener("click", wrong/correct)` in Q3_HTML script.*
+*Q5/Q6/Q7 default to o1=correct. To flip: swap the correct()/wrong() calls on o1/o2 click listeners AND swap the CorrectOption/IncorrectOption src in the correct()/wrong() functions.*
 
 ---
 
@@ -249,7 +255,10 @@ WebAudio synth tones (not a file). See `playQuizFeedbackSound('correct')`.
 | ~1071–1175 | `.quiz-feedback`, `.quiz-action-hit`, `.quiz-next` button |
 | ~1179–1260 | `@keyframes quizCorrectPop`, `@keyframes quizWrongShake`, `.quiz-retry` |
 | ~1277–1380 | Q3 option positions + states + Q3 tail hidden |
-| ~1380–1475 | Q4 option positions + states + Q4 tail hidden |
+| ~1380–1440 | Q4 option positions + states + Q4 tail hidden |
+| ~1441–1530 | Q5 option positions + states + Q5 tail hidden |
+| ~1485–1570 | Q6 option positions + states + Q6 tail hidden |
+| ~1529–1610 | Q7 option positions + states + Q7 tail hidden |
 
 ---
 
@@ -261,7 +270,10 @@ WebAudio synth tones (not a file). See `playQuizFeedbackSound('correct')`.
 | ~5280–5390 | `var Q2_HTML = \`...\`` |
 | ~5391–5501 | `var Q3_HTML = \`...\`` |
 | ~5502–5611 | `var Q4_HTML = \`...\`` |
-| ~5613–5668 | `var STORY = { bgMusic, title, pages: [...] }` |
+| ~5734–5844 | `var Q5_HTML = \`...\`` (Rectangle) |
+| ~5845–5955 | `var Q6_HTML = \`...\`` (Circle) |
+| ~5956–6066 | `var Q7_HTML = \`...\`` (Square) |
+| ~6068–6160 | `var STORY = { bgMusic, title, pages: [...] }` |
 | ~5670–5850 | Page injection loop (`STORY.pages.forEach`) |
 | ~6150–6165 | `initMusic()`, `startMusic()` |
 | ~6220–6260 | `turning` event handler (stop audio, stop video) |

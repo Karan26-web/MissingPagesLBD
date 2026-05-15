@@ -40,9 +40,9 @@
     /* Loader stage: book SVG matches open-book height (~472px), title + start button overlay it */
     .loader-stage {
       position: relative;
-      width: min(78vw, 560px);
-      height: min(54vh, 360px);
-      margin-top: 8vh;
+      width: min(92vw, 820px);
+      height: min(82vh, 560px);
+      margin-top: 4vh;
       /* invisible header safe area so book never touches top */
       display: flex;
       align-items: center;
@@ -174,7 +174,7 @@
     /* ── Theme tokens (set by JS via THEMES[ACTIVE_THEME]) ── */
     :root {
       /* Defaults match ACTIVE_THEME ('pawYellow') to avoid initial-paint flash */
-      --theme-bg: #c4a2ff !important;
+      --theme-bg: #f5e88a;
       --theme-cover: #7B2630;
       --theme-cover-dark: #5C1B23;
       --theme-cover-light: #9C3641;
@@ -1446,6 +1446,74 @@
         transition: none !important;
       }
     }
+
+    /* ── BloomFest: preloader cover image ── */
+    .loader-stage {
+      width: min(92vw, 1100px) !important;
+      height: min(53vw, 634px) !important;
+      margin-top: 1vh !important;
+    }
+    .loader-book { background: transparent; }
+    .loader-book svg { display: none !important; }
+    .loader-cover-img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+      border-radius: 6px;
+      box-shadow: 0 16px 50px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.22);
+      pointer-events: none;
+    }
+    .loader-overlay { display: none !important; }
+
+    /* Progress bar — positioned directly in .loader-stage */
+    .loader-stage > .loader-bar-wrap {
+      position: absolute;
+      bottom: 4%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(55%, 240px);
+    }
+
+    /* ── Start button — game style, popup + glow ── */
+    #startBtn {
+      display: none;
+      position: absolute !important;
+      bottom: 9% !important;
+      right: 12% !important;
+      margin: 0 !important;
+      padding: 11px 40px !important;
+      font-family: 'Fredoka One','Nunito',sans-serif !important;
+      font-size: clamp(16px, 2.6vw, 24px) !important;
+      color: #fff !important;
+      background: linear-gradient(180deg,#72e3ff 0%,#1fa3db 45%,#0e72b8 100%) !important;
+      border: 3px solid rgba(255,255,255,.7) !important;
+      border-radius: 50px !important;
+      cursor: pointer !important;
+      letter-spacing: 1.5px !important;
+      text-transform: uppercase !important;
+      text-shadow: 0 1px 3px rgba(0,30,60,.35) !important;
+      box-shadow: 0 5px 0 #0a5a8c, 0 8px 24px rgba(0,0,0,.3), 0 0 20px rgba(90,215,255,.35) !important;
+    }
+    #startBtn.btn-visible {
+      display: inline-block !important;
+      animation: startBtnPop .55s cubic-bezier(.18,1.25,.32,1) both,
+                 startBtnGlow 2s ease-in-out infinite .65s !important;
+    }
+    #startBtn.btn-visible:hover {
+      box-shadow: 0 5px 0 #0a5a8c, 0 8px 24px rgba(0,0,0,.3), 0 0 42px rgba(90,215,255,.75) !important;
+      transform: translateY(-2px) scale(1.04) !important;
+    }
+    @keyframes startBtnPop {
+      0%   { opacity:0; transform:scale(.2) rotate(-8deg); }
+      65%  { opacity:1; transform:scale(1.1) rotate(2deg); }
+      100% { opacity:1; transform:scale(1) rotate(0deg); }
+    }
+    @keyframes startBtnGlow {
+      0%,100% { box-shadow:0 5px 0 #0a5a8c,0 8px 24px rgba(0,0,0,.3),0 0 20px rgba(90,215,255,.35); }
+      50%     { box-shadow:0 5px 0 #0a5a8c,0 8px 24px rgba(0,0,0,.3),0 0 58px rgba(90,215,255,.88),0 0 90px rgba(90,215,255,.25); }
+    }
+
   </style>
 </head>
 
@@ -1454,41 +1522,12 @@
   <div id="preloader">
     <div class="loader-stage">
       <div class="loader-book">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 128 144" preserveAspectRatio="none" aria-hidden="true">
-          <!-- Back cover -->
-          <path class="lb-cover-dark"
-            d="M106.02 121.68H36.18c-1.66 0-1.26-1.35-1.26-3.01V14.05c0-1.66 1.35-3.01 3.01-3.01h69.36c2.72 0 4.93 2.21 4.93 4.93v99.76c0 3.86-1.83 5.95-6.2 5.95" />
-          <!-- Page edge -->
-          <path class="lb-pages-edge"
-            d="M18.53 115.14c0 1.94 3.07 3.57 5.01 3.57l80.39-.05c2.98 0 4.54-1.58 4.54-3.52l-.25-21.32H18.53z" />
-          <!-- Page sheet -->
-          <path class="lb-pages"
-            d="M101.47 105.88s-2.13 5.85.03 8.78c2.51 3.4 6.89 2.58 6.89.99V16.44c0-.66-.61-1.14-1.25-1-1.39.3-3.89.31-7.21-1.89z" />
-          <!-- Front cover dark edge -->
-          <path class="lb-cover-dark"
-            d="M94.16 110.85H23.64V6.45h72.25c2.27 0 3.87.61 4.62 1.62.98 1.31 1.5 3.3 1.5 5.48V103a7.85 7.85 0 0 1-7.85 7.85" />
-          <!-- Front cover face -->
-          <path class="lb-cover"
-            d="M92.01 107.78H25.54c-2.76 0-4.99-2.24-4.99-4.99V11.45c0-2.76 2.24-4.99 4.99-4.99h66.47c3.82 0 6.92 2.18 6.92 6.92v87.49c-.01 3.81-3.1 6.91-6.92 6.91" />
-          <!-- Spine -->
-          <path class="lb-spine-light"
-            d="M34.43 109.75 34.38 6.46h-11.2s-2.31-.4-3.85 0c-2.79.73-3.56 2.76-3.56 6.07v94.41c0 6.7.41 9.6 2.44 11.72-.12-1.54.87-6.83 1.68-8.28.72-1.28 14.54-.63 14.54-.63" />
-          <path fill="none" stroke="#a8aaab" stroke-width="2" stroke-miterlimit="10" d="M23.18 6.45v104.4" />
-          <path d="m34.38 109.34-11.3.22c-3.77 0-5.06 4.04-4.39 6.71.84 3.37 4.32 3.92 5.18 3.92h12.65" fill="none"
-            stroke="#a8aaab" stroke-width="3" stroke-miterlimit="10" />
-        </svg>
+        <img class="loader-cover-img" src="media/1.jpg" alt="The Royal Bloom Fest">
       </div>
-      <div class="loader-overlay">
-        <div class="loader-text">Missing Pages</div>
-        <div class="loader-bar-wrap">
-          <div class="loader-bar" id="loaderBar"></div>
-        </div>
-        <button id="startBtn"
-          style="display:none;margin-top:16px;padding:9px 28px;font-family:'Fredoka One','Nunito',sans-serif;font-size:clamp(13px,1.6vw,16px);color:var(--theme-cover);background:#ffffff;border:none;border-radius:50px;cursor:pointer;box-shadow:0 5px 14px rgba(0,0,0,.28), inset 0 -2px 0 rgba(0,0,0,.08);transition:transform .15s,box-shadow .15s;letter-spacing:.5px;"
-          onclick="startApp()">
-          ▶ Start
-        </button>
+      <div class="loader-bar-wrap">
+        <div class="loader-bar" id="loaderBar"></div>
       </div>
+      <button id="startBtn" onclick="startApp()">START</button>
     </div>
   </div>
 
@@ -1516,7 +1555,7 @@
       <div class="page-stack-purple"></div>
       <div class="spine-tab"></div>
     </div>
-    <div class="pg-cnt" id="pgCnt">Missing Pages</div>
+    <div class="pg-cnt" id="pgCnt">The Royale Bloom Fest</div>
   </div>
 
   <script>
@@ -4977,7 +5016,7 @@
        All themes follow the same chunky-cute design language.
        ═══════════════════════════════════════════════════════════ */
 
-    var ACTIVE_THEME = 'pawYellow';   // ← change this: sky | starPink | pawYellow | toolBlue | starYellow | mintLeaf | peachHeart | lavenderMoon | coralSun | forestDot
+    var ACTIVE_THEME = 'bloomFest';   // ← change this: sky | starPink | pawYellow | toolBlue | starYellow | mintLeaf | peachHeart | lavenderMoon | coralSun | forestDot | bloomFest
 
     /* ── Reusable decoration generators ──
        All decor is concentrated in the 4 corners (well outside the centered
@@ -5103,6 +5142,28 @@
         + sun(920, 540, 1.1) + sun(830, 460, .85);
     }
 
+    function decorBloomFest() {
+      function daisy(cx, cy, sc, rot) {
+        sc = (sc || 1) * 0.65; rot = rot || 0;
+        var petals = '';
+        for (var i = 0; i < 8; i++) {
+          petals += '<ellipse cx="0" cy="-18" rx="6" ry="11" transform="rotate(' + (i * 45) + ')" fill="rgba(255,255,255,.78)"/>';
+        }
+        return '<g transform="translate(' + cx + ',' + cy + ') scale(' + sc + ') rotate(' + rot + ')">'
+          + petals + '<circle r="8" fill="rgba(255,210,50,.9)"/></g>';
+      }
+      function leaf(cx, cy, sc, rot) {
+        sc = (sc || 1) * 0.55;
+        return '<path transform="translate(' + cx + ',' + cy + ') scale(' + sc + ') rotate(' + rot + ')" '
+          + 'fill="rgba(70,170,55,.45)" d="M0,0 C14,-24 28,-18 24,0 C20,18 5,18 0,0Z"/>';
+      }
+      return daisy(65, 72, 1.3, 0) + leaf(88, 96, 1.1, 22) + daisy(158, 158, 1.0, 15) + leaf(176, 180, 1.0, -15)
+        + daisy(938, 72, 1.2, 10) + leaf(910, 98, 1.0, -24) + daisy(848, 162, 1.0, -8) + leaf(828, 184, 1.0, 18)
+        + daisy(65, 545, 1.2, -5) + leaf(88, 522, 1.1, 16) + daisy(158, 462, 1.0, 20) + leaf(176, 440, 1.0, -20)
+        + daisy(942, 545, 1.3, 25) + leaf(916, 520, 1.0, -14) + daisy(852, 465, 1.0, -18) + leaf(830, 444, 1.0, 22)
+        + decorStars('rgba(255,200,50,.28)', 0.65);
+    }
+
     /* ── THEMES — change ACTIVE_THEME above to switch ── */
     var THEMES = {
       // From screenshots
@@ -5117,7 +5178,8 @@
       peachHeart: { bg: '#FFB7A0', cover: '#5B5FBF', coverDark: '#3E429A', coverLight: '#7B7FE0', accent: '#5B5FBF', decor: function () { return decorHearts('rgba(255,255,255,.45)'); } },
       lavenderMoon: { bg: '#C9B8FF', cover: '#2E2A5C', coverDark: '#1B1840', coverLight: '#4A4685', accent: '#2E2A5C', decor: function () { return decorMoons('rgba(255,255,255,.5)'); } },
       coralSun: { bg: '#FF9A7B', cover: '#1F8FA8', coverDark: '#13647A', coverLight: '#3FB0C9', accent: '#1F8FA8', decor: function () { return decorSuns('rgba(255,255,255,.5)'); } },
-      forestDot: { bg: '#2F6B4F', cover: '#F4C95D', coverDark: '#C99B3F', coverLight: '#FFD97A', accent: '#F4C95D', decor: function () { return decorDots('rgba(255,255,255,.3)') + decorStars('rgba(255,255,255,.18)', .7); } }
+      forestDot: { bg: '#2F6B4F', cover: '#F4C95D', coverDark: '#C99B3F', coverLight: '#FFD97A', accent: '#F4C95D', decor: function () { return decorDots('rgba(255,255,255,.3)') + decorStars('rgba(255,255,255,.18)', .7); } },
+      bloomFest: { bg: '#f5e88a', cover: '#7B2630', coverDark: '#5C1B23', coverLight: '#9C3641', accent: '#b5681a', decor: decorBloomFest }
     };
 
     function applyTheme(name) {
@@ -5600,66 +5662,45 @@
       <\/script>`;
 
     var STORY = {
-      bgMusic: "audio/Quirky_Podcast_Jingle.mp3",
-      title: "Maale & Gopu’s Big Adventure",
+      bgMusic: "audios/ThemeMusic.mp3",
+      title: "The Royal Bloom Fest",
       pages: [
-        {
-          image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MjAiIGhlaWdodD0iNDcyIiB2aWV3Qm94PSIwIDAgODIwIDQ3MiI+CiAgPCEtLSBTa3kgZ3JhZGllbnQgYmFja2dyb3VuZCAtLT4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic2t5MSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjODdDRUVCIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0IwRTBGRiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZmxvb3IxIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM0QTkwRDkiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMjk2MEE4Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ3YWxsMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNUJDOEU4Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzNBQUFDOCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPCEtLSBXYWxsIC0tPgogIDxyZWN0IHdpZHRoPSI4MjAiIGhlaWdodD0iMzgwIiBmaWxsPSJ1cmwoI3dhbGwxKSIvPgogIDwhLS0gRmxvb3IgLS0+CiAgPHJlY3QgeT0iMzQwIiB3aWR0aD0iODIwIiBoZWlnaHQ9IjEzMiIgZmlsbD0idXJsKCNmbG9vcjEpIi8+CiAgPCEtLSBXYWxsIGRlY29yYXRpb25zIC0gcGljdHVyZSBmcmFtZXMgLS0+CiAgPHJlY3QgeD0iNjAiIHk9IjYwIiB3aWR0aD0iODAiIGhlaWdodD0iMTAwIiByeD0iNiIgZmlsbD0iIzJBN0E5QSIgc3Ryb2tlPSIjMUE1QTdBIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cmVjdCB4PSI2OCIgeT0iNjgiIHdpZHRoPSI2NCIgaGVpZ2h0PSI4NCIgcng9IjQiIGZpbGw9IiMzQUFBQzgiLz4KICA8dGV4dCB4PSIxMDAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIzNiI+8J+NjjwvdGV4dD4KICA8cmVjdCB4PSIxODAiIHk9IjQwIiB3aWR0aD0iMTEwIiBoZWlnaHQ9IjgwIiByeD0iNiIgZmlsbD0iIzJBN0E5QSIgc3Ryb2tlPSIjMUE1QTdBIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cmVjdCB4PSIxODgiIHk9IjQ4IiB3aWR0aD0iOTQiIGhlaWdodD0iNjQiIHJ4PSI0IiBmaWxsPSIjM0FBQUM4Ii8+CiAgPHRleHQgeD0iMjM1IiB5PSI5MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIzMCI+4q2QPC90ZXh0PgogIDwhLS0gUmlnaHQgc2lkZSBmcmFtZXMgLS0+CiAgPHJlY3QgeD0iNTkwIiB5PSI0MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI4MCIgcng9IjYiIGZpbGw9IiMyQTdBOUEiIHN0cm9rZT0iIzFBNUE3QSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHJlY3QgeD0iNTk4IiB5PSI0OCIgd2lkdGg9Ijg0IiBoZWlnaHQ9IjY0IiByeD0iNCIgZmlsbD0iIzNBQUFDOCIvPgogIDx0ZXh0IHg9IjY0MCIgeT0iOTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMjgiPvCfjLg8L3RleHQ+CiAgPHJlY3QgeD0iNzEwIiB5PSI2MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjEwMCIgcng9IjYiIGZpbGw9IiMyQTdBOUEiIHN0cm9rZT0iIzFBNUE3QSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHJlY3QgeD0iNzE4IiB5PSI2OCIgd2lkdGg9IjY0IiBoZWlnaHQ9Ijg0IiByeD0iNCIgZmlsbD0iIzNBQUFDOCIvPgogIDx0ZXh0IHg9Ijc1MCIgeT0iMTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMyIj7wn4yIPC90ZXh0PgogIDwhLS0gV2luZG93IC0tPgogIDxyZWN0IHg9IjY0MCIgeT0iODAiIHdpZHRoPSIxNDAiIGhlaWdodD0iMTYwIiByeD0iMTAiIGZpbGw9IiNGMEMwNjAiIHN0cm9rZT0iIzhCNjAxMCIgc3Ryb2tlLXdpZHRoPSI1Ii8+CiAgPHJlY3QgeD0iNjQ4IiB5PSI4OCIgd2lkdGg9IjU2IiBoZWlnaHQ9IjE0MCIgcng9IjYiIGZpbGw9IiM4N0NFRUIiLz4KICA8cmVjdCB4PSI3MTIiIHk9Ijg4IiB3aWR0aD0iNjAiIGhlaWdodD0iMTQwIiByeD0iNiIgZmlsbD0iIzg3Q0VFQiIvPgogIDwhLS0gV2luZG93IHNjZW5lcnkgLS0+CiAgPGVsbGlwc2UgY3g9IjY3MCIgY3k9IjEzMCIgcng9IjMwIiByeT0iMjAiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjkiLz4KICA8ZWxsaXBzZSBjeD0iNzMwIiBjeT0iMTIwIiByeD0iMjUiIHJ5PSIxNiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuOCIvPgogIDwhLS0gSGlsbHMgb3V0c2lkZSB3aW5kb3cgLS0+CiAgPGVsbGlwc2UgY3g9IjY2OCIgY3k9IjIwMCIgcng9IjQwIiByeT0iMjUiIGZpbGw9IiM1QUFBNDAiLz4KICA8ZWxsaXBzZSBjeD0iNzMwIiBjeT0iMjA1IiByeD0iMzUiIHJ5PSIyMiIgZmlsbD0iIzRBOUEzMCIvPgogIDwhLS0gU21pbGV5IHN1biBmYWNlIG9uIGhpbGwgLS0+CiAgPGNpcmNsZSBjeD0iNzEwIiBjeT0iMTkyIiByPSIxMiIgZmlsbD0iI0ZGRDcwMCIvPgogIDxjaXJjbGUgY3g9IjcwNiIgY3k9IjE4OSIgcj0iMiIgZmlsbD0iIzMzMyIvPgogIDxjaXJjbGUgY3g9IjcxNCIgY3k9IjE4OSIgcj0iMiIgZmlsbD0iIzMzMyIvPgogIDxwYXRoIGQ9Ik03MDYgMTk1IFE3MTAgMTk5IDcxNCAxOTUiIHN0cm9rZT0iIzMzMyIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KICA8IS0tIEJlZCBmcmFtZSAtLT4KICA8cmVjdCB4PSIyNTAiIHk9IjIwMCIgd2lkdGg9IjM2MCIgaGVpZ2h0PSIxODAiIHJ4PSIxNiIgZmlsbD0iIzZCM0ExRiIvPgogIDxyZWN0IHg9IjI0MCIgeT0iMTgwIiB3aWR0aD0iODAiIGhlaWdodD0iMTAwIiByeD0iMTAiIGZpbGw9IiM1QTJFMTQiLz4KICA8cmVjdCB4PSI0OTAiIHk9IjIyMCIgd2lkdGg9IjcwIiBoZWlnaHQ9IjgwIiByeD0iMTAiIGZpbGw9IiM1QTJFMTQiLz4KICA8IS0tIE1hdHRyZXNzIC0tPgogIDxyZWN0IHg9IjI2MCIgeT0iMjMwIiB3aWR0aD0iMzQwIiBoZWlnaHQ9IjE0MCIgcng9IjEyIiBmaWxsPSIjNUJDQ0Q4Ii8+CiAgPCEtLSBQaWxsb3cgLS0+CiAgPHJlY3QgeD0iMjgwIiB5PSIyMzgiIHdpZHRoPSIxMjAiIGhlaWdodD0iNzAiIHJ4PSIxNCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuOTUiLz4KICA8IS0tIEJsYW5rZXQvYm9vayAtLT4KICA8cmVjdCB4PSIzMDAiIHk9IjI4MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSI3MCIgcng9IjEwIiBmaWxsPSIjRTgzMDRBIi8+CiAgPCEtLSBOaWdodHN0YW5kIC0tPgogIDxyZWN0IHg9IjE3MCIgeT0iMjgwIiB3aWR0aD0iODAiIGhlaWdodD0iOTAiIHJ4PSI4IiBmaWxsPSIjN0E0NDIyIi8+CiAgPHJlY3QgeD0iMTc4IiB5PSIzMTAiIHdpZHRoPSI2NCIgaGVpZ2h0PSIxMCIgcng9IjQiIGZpbGw9IiM2QTM0MTIiLz4KICA8cmVjdCB4PSIyMDUiIHk9IjMxOCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjE1IiByeD0iNSIgZmlsbD0iI0MwQTA2MCIvPgogIDwhLS0gTGFtcCAtLT4KICA8cmVjdCB4PSIxOTUiIHk9IjI0MCIgd2lkdGg9IjEyIiBoZWlnaHQ9IjQyIiByeD0iNCIgZmlsbD0iI0MwQTA2MCIvPgogIDxlbGxpcHNlIGN4PSIyMDEiIGN5PSIyNTgiIHJ4PSIyOCIgcnk9IjgiIGZpbGw9IiNGRjg4NzAiLz4KICA8cG9seWdvbiBwb2ludHM9IjE3MywyNDAgMjI5LDI0MCAyMTgsMjc4IDE4NCwyNzgiIGZpbGw9IiNGRjY2NTUiLz4KICA8IS0tIFBhbmRhIGNoYXJhY3RlciBvbiBiZWQgLS0+CiAgPGNpcmNsZSBjeD0iNDEwIiBjeT0iMjQ1IiByPSI0OCIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSI0MTAiIGN5PSIyNDUiIHI9IjM4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjREREIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8IS0tIFBhbmRhIGVhcnMgLS0+CiAgPGNpcmNsZSBjeD0iMzgzIiBjeT0iMjEwIiByPSIxOCIgZmlsbD0iIzIyMiIvPgogIDxjaXJjbGUgY3g9IjQzNyIgY3k9IjIxMCIgcj0iMTgiIGZpbGw9IiMyMjIiLz4KICA8IS0tIEV5ZSBwYXRjaGVzIC0tPgogIDxlbGxpcHNlIGN4PSIzOTYiIGN5PSIyMzgiIHJ4PSIxMyIgcnk9IjE0IiBmaWxsPSIjMjIyIi8+CiAgPGVsbGlwc2UgY3g9IjQyNCIgY3k9IjIzOCIgcng9IjEzIiByeT0iMTQiIGZpbGw9IiMyMjIiLz4KICA8IS0tIEV5ZXMgLS0+CiAgPGNpcmNsZSBjeD0iMzk2IiBjeT0iMjM4IiByPSI3IiBmaWxsPSJ3aGl0ZSIvPgogIDxjaXJjbGUgY3g9IjQyNCIgY3k9IjIzOCIgcj0iNyIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSIzOTgiIGN5PSIyMzciIHI9IjQiIGZpbGw9IiMxMTEiLz4KICA8Y2lyY2xlIGN4PSI0MjYiIGN5PSIyMzciIHI9IjQiIGZpbGw9IiMxMTEiLz4KICA8Y2lyY2xlIGN4PSIzOTkiIGN5PSIyMzUiIHI9IjEuNSIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSI0MjciIGN5PSIyMzUiIHI9IjEuNSIgZmlsbD0id2hpdGUiLz4KICA8IS0tIE5vc2UgYW5kIG1vdXRoIC0tPgogIDxlbGxpcHNlIGN4PSI0MTAiIGN5PSIyNTMiIHJ4PSI4IiByeT0iNiIgZmlsbD0iIzIyMiIvPgogIDxwYXRoIGQ9Ik00MDIgMjU5IFE0MTAgMjY3IDQxOCAyNTkiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+CiAgPCEtLSBCbHVzaCAtLT4KICA8ZWxsaXBzZSBjeD0iMzg4IiBjeT0iMjU3IiByeD0iOCIgcnk9IjUiIGZpbGw9IiNGRkIwQjAiIG9wYWNpdHk9IjAuNiIvPgogIDxlbGxpcHNlIGN4PSI0MzIiIGN5PSIyNTciIHJ4PSI4IiByeT0iNSIgZmlsbD0iI0ZGQjBCMCIgb3BhY2l0eT0iMC42Ii8+CiAgPCEtLSBQYW5kYSBib2R5IChzaXR0aW5nIHVwIGluIGJlZCkgLS0+CiAgPGVsbGlwc2UgY3g9IjQxMCIgY3k9IjMxMCIgcng9IjUwIiByeT0iNDAiIGZpbGw9IndoaXRlIi8+CiAgPCEtLSBQYW5kYSBhcm1zIGhvbGRpbmcgYm9vayAtLT4KICA8ZWxsaXBzZSBjeD0iMzYwIiBjeT0iMjk1IiByeD0iMjIiIHJ5PSIxNCIgZmlsbD0id2hpdGUiIHRyYW5zZm9ybT0icm90YXRlKC0yMCAzNjAgMjk1KSIvPgogIDxlbGxpcHNlIGN4PSI0NjAiIGN5PSIyOTUiIHJ4PSIyMiIgcnk9IjE0IiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJyb3RhdGUoMjAgNDYwIDI5NSkiLz4KICA8IS0tIEJsYWNrIHBhbmRhIGJlbGx5IHNwb3QgLS0+CiAgPGVsbGlwc2UgY3g9IjQxMCIgY3k9IjMyMCIgcng9IjI1IiByeT0iMjgiIGZpbGw9IiNFRUUiLz4KICA8IS0tIE90dG9tb24vZm9vdHN0b29sIC0tPgogIDxyZWN0IHg9IjQ3MCIgeT0iMzMwIiB3aWR0aD0iOTAiIGhlaWdodD0iNjAiIHJ4PSIxNiIgZmlsbD0iIzVBMkUxNCIvPgogIDwhLS0gSGVhcnQgb24gb3R0b21vbiAtLT4KICA8dGV4dCB4PSI1MTUiIHk9IjM2OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyOCI+JiM5ODI5OzwvdGV4dD4KPC9zdmc+",
-          video: "video/page1-clip.mp4",
-          dialogues: []
-        },
-        {
-          image: null,
-          video: null,
-          html: Q1_HTML,
-          dialogues: []
-        },
-        {
-          image: null /* deduped — set below */,
-          video: "video/page2-clip.mp4",
-          dialogues: []
-        },
-        {
-          image: null,
-          video: null,
-          html: Q2_HTML,
-          dialogues: []
-        },
-        {
-          image: null,
-          video: "video/page3-clip.mp4",
-          dialogues: []
-        },
-        {
-          image: null,
-          video: null,
-          html: Q3_HTML,
-          dialogues: []
-        },
-        {
-          image: null,
-          video: "video/page4-clip.mp4",
-          dialogues: []
-        },
-        {
-          image: null,
-          video: null,
-          html: Q4_HTML,
-          dialogues: []
-        },
-        {
-          image: null,
-          video: null,
-          isCountPage: true,
-          dialogues: []
-        }
+        { image: "media/1.jpg",                                              audio: "audios/TheRoyalBloomFest.mp3" },
+        { image: "media/2.jpg",                                              audio: "audios/MeetTaraandKabirTheyareExcitedForTheBloomFest.mp3" },
+        { image: "media/3.jpg",                                              audio: "audios/TheRoayalGuestsAreComingButThePAthAreBlocked.mp3" },
+        { image: "media/4OhNoThwBoxesAreEverywhere.jpg",                     audio: "audios/OHNOTheBoxesAreEverywhere.mp3" },
+        { image: "media/5WeNeedToCleanThePalaceFast.jpg",                    audio: "audios/WeneedToCleanThePlaceFast.mp3" },
+        { image: "media/6ComeOnLetUstryMovingTheBOxes.jpg",                  audio: "audios/ComeOnTryMovingTheBoxes.mp3" },
+        { image: "media/7ItisStuckItissoHeavy.jpg",                          audio: "audios/ItisStuckitisSooHeavy.mp3" },
+        { image: "media/8kabir!itisTooHeavyForus.jpg",                       audio: "audios/KabirItisTooHeavyForUs.mp3" },
+        { image: "media/9WeNeedHelp.jpg",                                    audio: "audios/WeNeedHelp.mp3" },
+        { image: "media/10LetUsCallGogo.jpg",                                audio: "audios/LetUsCallGOGO.mp3" },
+        { image: "media/11TwinkleTwinkleMagicLIght.jpg",                     audio: "audios/TwinkleTwingleMagiclightBriggogoToSight.mp3" },
+        { video: "media/12.mp4",                                             postAudio: "audios/Umm… I was flying… then IgotsleepyandthenBOOM!Icrashed.mp3" },
+        { image: "media/13DidSomeoneCallGOGo.jpg",                           audio: "audios/DidSomeoneCallGOGO.mp3" },
+        { image: "media/14TheGardenIsSooMesssy.jpg",                         audio: "audios/GogoWithGardenIsSoMessy.mp3" },
+        { image: "media/15DidYouDropAllTheseBoxes.jpg",                      audio: "audios/DiduDropAlltheseBoxes.mp3" },
+        { video: "media/16.mp4",                                             postAudio: "audios/TwinkleTwinkleMagicLittleBringGOGO.mp3" },
+        { image: "media/17ItisOkayGogo.jpg",                                 audio: "audios/ItisOkayGogo.mp3" },
+        { image: "media/18ButGuestsAreComingSoon.jpg",                       audio: "audios/ButTheGuestsAreComingSoon.mp3" },
+        { image: "media/19WeNeedToMoveThemFast.jpg",                         audio: "audios/WeNeedToMoveThemFast.mp3" },
+        { image: "media/20TooHeavyToPushandEveryBoxHasDifferentThings.jpg",  audio: "audios/TooHeaavyToPush.mp3" },
+        { image: "media/21GogoKnowsTheTrickWeMustSortThem.jpg",              audio: "audios/GogoKnowsTheTrickWeNeedTosortthem.mp3" },
+        { image: "media/22SortThemHow.jpg",                                  audio: "audios/SortThemHow.mp3" },
+        { image: "media/23UsingtheMagicMoers.jpg",                           audio: "audios/usingTheMagicMovers.mp3" },
+        { image: "media/24HeavierThingsGoIntheredWagon.jpg",                 audio: "audios/HeavierThingsGotoRedWagon.mp3" },
+        { image: "media/25LighterThingsGointheBalloonBAsket.jpg",            audio: "audios/LighterThingsGoesInsideTheBalloonBasket.mp3" },
+        { image: "media/26IfweEmptyTHeBoxesCanWeCleanThePath.jpg",           audio: "audios/IfweEmptyTheBoxsWeCanClearThePath.mp3" },
+        { image: "media/27yesONceaBoxIsEmptypoofZApItAway.jpg",              audio: "audios/Yes! OnceaboxisemptyPOOF!zaitaway.mp3" },
+        { image: "media/28LetusOpenThem.jpg",                                audio: "audios/LetusOpenThem.mp3" },
+        { image: "media/29Yes!LEtsUsStart.jpg",                              audio: "audios/YesLetUsStart.mp3" },
+        { image: "media/30.jpg",                                             audio: "audios/UdidITushortedAllTheItem.mp3" },
+        { image: "media/31TheRedWAgonISTakingTheHeavierThingsINside.jpg",    audio: "audios/heRedWagonTakingTheHeavierThingsInside.mp3" },
+        { image: "media/32AndtheBalloonsBasketIsTakingTheLighterThings.jpg", audio: "audios/AndtheBalloonBasketTakingTheLightestTHings.mp3" },
+        { image: "media/33WesavedTheBloonFest.jpg",                          audio: "audios/WeSavedTheBloomFest.mp3" },
+        { image: "media/34.jpg",                                             audio: "audios/SeeUnextTime.mp3" }
       ]
     };
-
-    STORY.pages[2].image = STORY.pages[0].image; /* page2-clip fallback */
-    STORY.pages[4].image = STORY.pages[0].image; /* page3-clip fallback */
-    STORY.pages[6].image = STORY.pages[0].image; /* page4-clip fallback */
-    STORY.pages[8].image = null; /* count page — no image, plain purple */
     var TOTAL = STORY.pages.length;
 
     /* Build flipbook pages (single-page landscape):
@@ -5729,8 +5770,8 @@
         } else if (bg) {
           $p.css({
             backgroundImage: 'url(' + bg + ')',
-            backgroundSize: W + 'px ' + H + 'px',
-            backgroundPosition: '0 0',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
           });
         } else if (page.isCountPage) {
@@ -5895,7 +5936,7 @@
     function updateCounter(p) {
       var si = Math.max(0, Math.min(p - 2, TOTAL - 1));
       curSpread = si;
-      $('#pgCnt').text('Missing Pages');
+      $('#pgCnt').text('');
     }
 
     /* ── Balloons ── */
@@ -6144,7 +6185,7 @@
     function initMusic() { if (STORY.bgMusic) { bgEl.src = STORY.bgMusic; bgEl.volume = 0.35; bgEl.loop = true; try { bgEl.load(); } catch (e) { } } }
     function startMusic() {
       if (!STORY.bgMusic || musicGo) return;
-      bgEl.volume = 0.02;
+      bgEl.volume = 0.35;
       var p = bgEl.play();
       if (p && p.then) { p.then(function () { musicGo = true; }).catch(function () { musicGo = false; }); }
       else { musicGo = true; }
@@ -6198,14 +6239,10 @@
             $('.count-page-overlay').remove();
             $('.balloon-container').remove();
             $('.confetti-container').remove();
-            /* Stop poem/quiz audio on page change */
-            if (window.__currentPoemAudio) {
-              try { window.__currentPoemAudio.pause(); window.__currentPoemAudio.src = ''; } catch (e) { }
-              window.__currentPoemAudio = null;
-            }
-            if (window.__currentQuizAudio) {
-              try { window.__currentQuizAudio.pause(); window.__currentQuizAudio.src = ''; } catch (e) { }
-              window.__currentQuizAudio = null;
+            /* Stop scene audio on page change */
+            if (window.__currentSceneAudio) {
+              try { window.__currentSceneAudio.pause(); window.__currentSceneAudio.src = ''; } catch (e) { }
+              window.__currentSceneAudio = null;
             }
             /* Pause all videos and clear sync intervals */
             $('#flipbook video').each(function () {
@@ -6218,51 +6255,28 @@
           turned: function (e, page, view) {
             updateCounter(page);
             startMusic();
-            /* Auto-play video on current page */
-            if (curSpread >= 0) {
+            if (curSpread < 0) return;
+            var scene = STORY.pages[curSpread];
+            if (!scene) return;
+            if (scene.video) {
               var vid = $('#flipbook .page[data-si="' + curSpread + '"] video').get(0);
               if (vid) {
-                try { vid.currentTime = 0; } catch (e) { }
+                try { vid.currentTime = 0; } catch (ex) {}
                 vid.muted = false;
-                vid.play().catch(function () { });
-                /* Poem audio: play at 72% of video duration */
-                var poemMap = { 0: 'audio/poem1.mp3', 2: 'audio/poem2.mp3', 4: 'audio/poem3.mp3', 6: 'audio/poem4.mp3' };
-                var poemSrc = poemMap[curSpread];
-                if (poemSrc) {
-                  vid._poemPlayed = false;
-                  if (vid._poemHandler) vid.removeEventListener('timeupdate', vid._poemHandler);
-                  vid._poemHandler = function () {
-                    if (!vid._poemPlayed && vid.duration && vid.currentTime >= vid.duration * 0.72) {
-                      vid._poemPlayed = true;
-                      var pa = new Audio(poemSrc);
-                      pa.volume = 1.0;
-                      pa.play().catch(function () { });
-                      window.__currentPoemAudio = pa;
-                    }
-                  };
-                  vid.addEventListener('timeupdate', vid._poemHandler);
-                }
+                vid.play().catch(function () {});
+                vid.onended = function () {
+                  vid.onended = null;
+                  if (scene.postAudio) {
+                    var a = new Audio(scene.postAudio);
+                    window.__currentSceneAudio = a;
+                    a.play().catch(function () {});
+                  }
+                };
               }
-            }
-            /* Quiz audio: play when navigating to a quiz page */
-            var quizAudioMap = { 1: 'audio/q1.mp3', 3: 'audio/q2.mp3', 5: 'audio/q3.mp3', 7: 'audio/q4.mp3' };
-            if (quizAudioMap[curSpread]) {
-              var qSrc = quizAudioMap[curSpread];
-              setTimeout(function () {
-                if (window.__currentQuizAudio) { try { window.__currentQuizAudio.pause(); window.__currentQuizAudio.src = ''; } catch (e) { } }
-                window.__currentQuizAudio = new Audio(qSrc);
-                window.__currentQuizAudio.volume = 1.0;
-                window.__currentQuizAudio.play().catch(function () { });
-              }, 600);
-            }
-            if (curSpread >= 0) {
-              var curPage = STORY.pages[curSpread];
-              if (curPage && curPage.isCountPage) {
-                showCountPage();
-              } else {
-                buildOverlay(curSpread);
-                setTimeout(function () { startSeq(curSpread); }, 350);
-              }
+            } else if (scene.audio) {
+              var a = new Audio(scene.audio);
+              window.__currentSceneAudio = a;
+              a.play().catch(function () {});
             }
           }
         }
@@ -6319,14 +6333,7 @@
       setTimeout(function () { startSeq(0); }, 400);
 
 
-      setTimeout(function () {
-        var v = $('#flipbook .page[data-si="0"] video').get(0);
-        if (v) {
-          v.muted = false;
-          v.removeAttribute('muted');
-          v.play().catch(function () { });
-        }
-      }, 600);
+      /* Audio for scene 0 is handled by the turned event fired above */
 
       /* Click/tap left binding to go to previous page (mouse + touch + pointer) */
       var spineHandled = false;
@@ -6439,7 +6446,7 @@
       var btn = document.getElementById('startBtn');
       var barWrap = document.querySelector('.loader-bar-wrap');
       if (barWrap) barWrap.style.display = 'none';
-      if (btn) btn.style.display = 'inline-block';
+      if (btn) btn.classList.add('btn-visible');
     }
 
     function startApp() {
