@@ -174,7 +174,7 @@
     /* ── Theme tokens (set by JS via THEMES[ACTIVE_THEME]) ── */
     :root {
       /* Defaults match ACTIVE_THEME ('pawYellow') to avoid initial-paint flash */
-      --theme-bg: #f5e88a;
+      --theme-bg: linear-gradient(145deg,#f7c96e 0%,#f5e88a 45%,#faf0a0 100%);
       --theme-cover: #7B2630;
       --theme-cover-dark: #5C1B23;
       --theme-cover-light: #9C3641;
@@ -183,9 +183,11 @@
     }
 
     html,
-    body,
-    #preloader {
+    body {
       background: var(--theme-bg);
+    }
+    #preloader {
+      background: transparent !important;
     }
 
     /* ── Centered book scene ── */
@@ -1475,43 +1477,44 @@
       width: min(55%, 240px);
     }
 
-    /* ── Start button — game style, popup + glow ── */
+    /* ── Start button — transparent glow ring over the drawn START in cover art ── */
     #startBtn {
       display: none;
       position: absolute !important;
-      bottom: 9% !important;
-      right: 12% !important;
+      bottom: 4% !important;
+      right: 15% !important;
+      width: 22% !important;
+      height: 14% !important;
       margin: 0 !important;
-      padding: 11px 40px !important;
-      font-family: 'Fredoka One','Nunito',sans-serif !important;
-      font-size: clamp(16px, 2.6vw, 24px) !important;
-      color: #fff !important;
-      background: linear-gradient(180deg,#72e3ff 0%,#1fa3db 45%,#0e72b8 100%) !important;
-      border: 3px solid rgba(255,255,255,.7) !important;
+      padding: 0 !important;
+      background: transparent !important;
+      border: 3px solid rgba(255,255,255,.0) !important;
       border-radius: 50px !important;
       cursor: pointer !important;
-      letter-spacing: 1.5px !important;
-      text-transform: uppercase !important;
-      text-shadow: 0 1px 3px rgba(0,30,60,.35) !important;
-      box-shadow: 0 5px 0 #0a5a8c, 0 8px 24px rgba(0,0,0,.3), 0 0 20px rgba(90,215,255,.35) !important;
+      font-size: 0 !important;
+      box-shadow: none !important;
+      z-index: 10 !important;
     }
     #startBtn.btn-visible {
       display: inline-block !important;
-      animation: startBtnPop .55s cubic-bezier(.18,1.25,.32,1) both,
-                 startBtnGlow 2s ease-in-out infinite .65s !important;
+      border: 3px solid rgba(120,230,255,.95) !important;
+      box-shadow: 0 0 18px rgba(80,215,255,.7), 0 0 40px rgba(80,215,255,.35), inset 0 0 10px rgba(255,255,255,.18) !important;
+      animation: startBtnPop .6s cubic-bezier(.18,1.25,.32,1) both,
+                 startBtnGlow 2s ease-in-out infinite .7s !important;
     }
     #startBtn.btn-visible:hover {
-      box-shadow: 0 5px 0 #0a5a8c, 0 8px 24px rgba(0,0,0,.3), 0 0 42px rgba(90,215,255,.75) !important;
-      transform: translateY(-2px) scale(1.04) !important;
+      border-color: rgba(180,245,255,1) !important;
+      box-shadow: 0 0 32px rgba(80,215,255,.9), 0 0 65px rgba(80,215,255,.45), inset 0 0 16px rgba(255,255,255,.28) !important;
+      transform: scale(1.05) !important;
     }
     @keyframes startBtnPop {
-      0%   { opacity:0; transform:scale(.2) rotate(-8deg); }
-      65%  { opacity:1; transform:scale(1.1) rotate(2deg); }
-      100% { opacity:1; transform:scale(1) rotate(0deg); }
+      0%   { opacity:0; transform:scale(.4); border-color:rgba(120,230,255,0); }
+      65%  { opacity:1; transform:scale(1.08); }
+      100% { opacity:1; transform:scale(1); }
     }
     @keyframes startBtnGlow {
-      0%,100% { box-shadow:0 5px 0 #0a5a8c,0 8px 24px rgba(0,0,0,.3),0 0 20px rgba(90,215,255,.35); }
-      50%     { box-shadow:0 5px 0 #0a5a8c,0 8px 24px rgba(0,0,0,.3),0 0 58px rgba(90,215,255,.88),0 0 90px rgba(90,215,255,.25); }
+      0%,100% { box-shadow:0 0 12px rgba(80,215,255,.5), 0 0 28px rgba(80,215,255,.2), inset 0 0 8px rgba(255,255,255,.12); border-color:rgba(120,230,255,.8); }
+      50%     { box-shadow:0 0 30px rgba(80,215,255,.9), 0 0 60px rgba(80,215,255,.4), inset 0 0 16px rgba(255,255,255,.25); border-color:rgba(200,248,255,1); }
     }
 
   </style>
@@ -1532,7 +1535,7 @@
   </div>
 
   <!-- Themed background decorations (filled by applyTheme) -->
-  <svg id="themeDecor" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0"
+  <svg id="themeDecor" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1"
     viewBox="0 0 1000 600" preserveAspectRatio="none"></svg>
 
   <button id="replayBtn" onclick="replayPage()">&#8635; Replay</button>
@@ -5179,7 +5182,7 @@
       lavenderMoon: { bg: '#C9B8FF', cover: '#2E2A5C', coverDark: '#1B1840', coverLight: '#4A4685', accent: '#2E2A5C', decor: function () { return decorMoons('rgba(255,255,255,.5)'); } },
       coralSun: { bg: '#FF9A7B', cover: '#1F8FA8', coverDark: '#13647A', coverLight: '#3FB0C9', accent: '#1F8FA8', decor: function () { return decorSuns('rgba(255,255,255,.5)'); } },
       forestDot: { bg: '#2F6B4F', cover: '#F4C95D', coverDark: '#C99B3F', coverLight: '#FFD97A', accent: '#F4C95D', decor: function () { return decorDots('rgba(255,255,255,.3)') + decorStars('rgba(255,255,255,.18)', .7); } },
-      bloomFest: { bg: '#f5e88a', cover: '#7B2630', coverDark: '#5C1B23', coverLight: '#9C3641', accent: '#b5681a', decor: decorBloomFest }
+      bloomFest: { bg: 'linear-gradient(145deg,#f7c96e 0%,#f5e88a 45%,#faf0a0 100%)', cover: '#7B2630', coverDark: '#5C1B23', coverLight: '#9C3641', accent: '#b5681a', decor: decorBloomFest }
     };
 
     function applyTheme(name) {
