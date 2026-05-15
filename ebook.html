@@ -19,6 +19,7 @@
     }
 
     /* ── Preloader ── */
+    /* preloader bg fixed */
     #preloader {
       position: fixed;
       inset: 0;
@@ -186,8 +187,9 @@
     body {
       background: var(--theme-bg);
     }
+    /* preloader bg fixed */
     #preloader {
-      background: transparent !important;
+      background: var(--theme-bg) !important;
     }
 
     /* ── Centered book scene ── */
@@ -563,7 +565,7 @@
 
     /* Dummy pages — completely invisible, just fix turn.js pairing */
     .dummy-page {
-      background: transparent !important;
+      background: var(--theme-bg) !important;
       box-shadow: none !important;
       visibility: hidden;
     }
@@ -1451,22 +1453,59 @@
 
     /* ── BloomFest: preloader cover image ── */
     .loader-stage {
-      width: min(92vw, 1100px) !important;
-      height: min(53vw, 634px) !important;
-      margin-top: 1vh !important;
+      width: min(92vw, 900px) !important;
+      aspect-ratio: 820 / 472 !important;
+      height: auto !important;
+      margin-top: 2vh !important;
     }
-    .loader-book { background: transparent; }
+    .loader-book { background: transparent; pointer-events: none; }
     .loader-book svg { display: none !important; }
     .loader-cover-img {
       width: 100%;
       height: 100%;
       object-fit: fill;
       display: block;
-      border-radius: 6px;
-      box-shadow: 0 16px 50px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.22);
+      border-radius: 0 8px 8px 0;
       pointer-events: none;
     }
     .loader-overlay { display: none !important; }
+
+    /* Book frame: spine left, page-stack right & bottom, cover shadow */
+    .loader-book {
+      border-radius: 4px 8px 8px 4px !important;
+      box-shadow:
+        /* outer drop shadow */
+        0 22px 60px rgba(0,0,0,.45),
+        0 6px 18px rgba(0,0,0,.28),
+        /* spine gutter left */
+        inset 28px 0 20px -10px rgba(0,0,0,.45);
+    }
+    /* Spine strip */
+    .loader-stage::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 28px;
+      background: linear-gradient(to right, #2a0808 0%, #5C1B23 55%, #7B2630 100%);
+      border-radius: 4px 0 0 4px;
+      box-shadow: inset -4px 0 8px rgba(0,0,0,.3);
+      z-index: 5;
+      pointer-events: none;
+    }
+    /* Page stack (right + bottom edge) */
+    .loader-stage::after {
+      content: '';
+      position: absolute;
+      right: -10px; top: 4px; bottom: 4px;
+      width: 12px;
+      background: repeating-linear-gradient(to bottom,
+        #f4edd8 0px, #f4edd8 3px,
+        #e0d6b8 3px, #e0d6b8 6px);
+      border-radius: 0 3px 3px 0;
+      box-shadow: 4px 0 10px rgba(0,0,0,.2);
+      z-index: 0;
+      pointer-events: none;
+    }
 
     /* Progress bar — positioned directly in .loader-stage */
     .loader-stage > .loader-bar-wrap {
@@ -1477,44 +1516,55 @@
       width: min(55%, 240px);
     }
 
-    /* ── Start button — transparent glow ring over the drawn START in cover art ── */
+    /* ── Start button — visible game-style button, bottom-right of thumbnail ── */
     #startBtn {
       display: none;
       position: absolute !important;
-      bottom: 4% !important;
-      right: 15% !important;
-      width: 22% !important;
-      height: 14% !important;
+      bottom: 6% !important;
+      right: 6% !important;
       margin: 0 !important;
-      padding: 0 !important;
-      background: transparent !important;
-      border: 3px solid rgba(255,255,255,.0) !important;
+      padding: 0 14px !important;
+      width: 26% !important;
+      height: 17% !important;
+      font-family: 'Fredoka One','Nunito',sans-serif !important;
+      font-size: clamp(18px, 2.8vw, 26px) !important;
+      font-weight: 700 !important;
+      color: #fff !important;
+      letter-spacing: 2px !important;
+      text-transform: uppercase !important;
+      text-shadow: 0 2px 4px rgba(0,30,80,.45) !important;
+      background: linear-gradient(180deg, #7ee8ff 0%, #1baee0 40%, #0d7fc4 100%) !important;
+      border: 3px solid rgba(255,255,255,.75) !important;
+      border-bottom: 3px solid rgba(255,255,255,.35) !important;
       border-radius: 50px !important;
       cursor: pointer !important;
-      font-size: 0 !important;
-      box-shadow: none !important;
-      z-index: 10 !important;
+      box-shadow: 0 6px 0 #085a8a, 0 8px 28px rgba(0,0,0,.35), 0 0 22px rgba(80,210,255,.4) !important;
+      z-index: 20 !important;
+      pointer-events: all !important;
     }
     #startBtn.btn-visible {
-      display: inline-block !important;
-      border: 3px solid rgba(120,230,255,.95) !important;
-      box-shadow: 0 0 18px rgba(80,215,255,.7), 0 0 40px rgba(80,215,255,.35), inset 0 0 10px rgba(255,255,255,.18) !important;
-      animation: startBtnPop .6s cubic-bezier(.18,1.25,.32,1) both,
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      animation: startBtnPop .6s cubic-bezier(.18,1.3,.32,1) both,
                  startBtnGlow 2s ease-in-out infinite .7s !important;
     }
     #startBtn.btn-visible:hover {
-      border-color: rgba(180,245,255,1) !important;
-      box-shadow: 0 0 32px rgba(80,215,255,.9), 0 0 65px rgba(80,215,255,.45), inset 0 0 16px rgba(255,255,255,.28) !important;
-      transform: scale(1.05) !important;
+      transform: translateY(-3px) scale(1.04) !important;
+      box-shadow: 0 9px 0 #085a8a, 0 12px 32px rgba(0,0,0,.35), 0 0 44px rgba(80,210,255,.7) !important;
+    }
+    #startBtn.btn-visible:active {
+      transform: translateY(3px) !important;
+      box-shadow: 0 3px 0 #085a8a, 0 4px 16px rgba(0,0,0,.3) !important;
     }
     @keyframes startBtnPop {
-      0%   { opacity:0; transform:scale(.4); border-color:rgba(120,230,255,0); }
-      65%  { opacity:1; transform:scale(1.08); }
-      100% { opacity:1; transform:scale(1); }
+      0%   { opacity:0; transform:scale(.25) rotate(-6deg); }
+      60%  { opacity:1; transform:scale(1.1) rotate(2deg); }
+      100% { opacity:1; transform:scale(1) rotate(0deg); }
     }
     @keyframes startBtnGlow {
-      0%,100% { box-shadow:0 0 12px rgba(80,215,255,.5), 0 0 28px rgba(80,215,255,.2), inset 0 0 8px rgba(255,255,255,.12); border-color:rgba(120,230,255,.8); }
-      50%     { box-shadow:0 0 30px rgba(80,215,255,.9), 0 0 60px rgba(80,215,255,.4), inset 0 0 16px rgba(255,255,255,.25); border-color:rgba(200,248,255,1); }
+      0%,100% { box-shadow:0 6px 0 #085a8a,0 8px 28px rgba(0,0,0,.35),0 0 22px rgba(80,210,255,.4); }
+      50%     { box-shadow:0 6px 0 #085a8a,0 8px 28px rgba(0,0,0,.35),0 0 55px rgba(80,210,255,.85),0 0 85px rgba(80,210,255,.25); }
     }
 
   </style>
@@ -1523,9 +1573,10 @@
 <body>
   <!-- Preloader -->
   <div id="preloader">
+    <svg id="preloaderDecor" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0" viewBox="0 0 1000 600" preserveAspectRatio="none"></svg>
     <div class="loader-stage">
       <div class="loader-book">
-        <img class="loader-cover-img" src="media/1.jpg" alt="The Royal Bloom Fest">
+        <img class="loader-cover-img" src="assets/thumbnail.jpg" alt="The Royal Bloom Fest">
       </div>
       <div class="loader-bar-wrap">
         <div class="loader-bar" id="loaderBar"></div>
@@ -1558,7 +1609,7 @@
       <div class="page-stack-purple"></div>
       <div class="spine-tab"></div>
     </div>
-    <div class="pg-cnt" id="pgCnt">The Royale Bloom Fest</div>
+    <div class="pg-cnt" id="pgCnt"></div>
   </div>
 
   <script>
@@ -5195,6 +5246,8 @@
       r.setProperty('--theme-accent', t.accent);
       var decorEl = document.getElementById('themeDecor');
       if (decorEl) decorEl.innerHTML = t.decor();
+      var plDecor = document.getElementById('preloaderDecor');
+      if (plDecor) plDecor.innerHTML = t.decor();
     }
     applyTheme(ACTIVE_THEME);
 
@@ -5668,7 +5721,7 @@
       bgMusic: "audios/ThemeMusic.mp3",
       title: "The Royal Bloom Fest",
       pages: [
-        { image: "media/1.jpg",                                              audio: "audios/TheRoyalBloomFest.mp3" },
+        { image: "assets/thumbnail.jpg",                                    audio: "audios/TheRoyalBloomFest.mp3" },
         { image: "media/2.jpg",                                              audio: "audios/MeetTaraandKabirTheyareExcitedForTheBloomFest.mp3" },
         { image: "media/3.jpg",                                              audio: "audios/TheRoayalGuestsAreComingButThePAthAreBlocked.mp3" },
         { image: "media/4OhNoThwBoxesAreEverywhere.jpg",                     audio: "audios/OHNOTheBoxesAreEverywhere.mp3" },
